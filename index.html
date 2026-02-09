@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<title>Flip Book</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body {
+  margin: 0;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg,#1fa2a6,#4facfe);
+  font-family: Arial, sans-serif;
+}
+
+/* Çiçek deseni */
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  background:url("flower-pattern.jpg") repeat;
+  opacity:.15;
+  z-index:-2;
+}
+
+/* SAHNE */
+.scene{
+  position:relative;
+  width:1000px;
+  height:550px;
+}
+
+/* KİTAP FOTO */
+.book-bg{
+  position:absolute;
+  inset:0;
+  background:url("book-bg.jpg") center/contain no-repeat;
+  z-index:1;
+}
+
+/* KİTAP */
+.book{
+  position:absolute;
+  inset:40px;
+  perspective:3000px;
+  z-index:2;
+}
+
+/* SAYFA */
+.page{
+  position:absolute;
+  width:50%;
+  height:100%;
+  top:0;
+  background:#fff;
+  transform-style:preserve-3d;
+  transition:transform 1s;
+  box-shadow: inset 0 0 25px rgba(0,0,0,.2);
+}
+
+.page.left{
+  left:0;
+  transform-origin:left;
+}
+
+.page.right{
+  left:50%;
+  transform-origin:right;
+}
+
+.page-content{
+  padding:20px;
+}
+
+.page img{
+  width:100%;
+  max-height:60%;
+  object-fit:contain;
+}
+
+/* KAPAK */
+.cover{
+  background:#111;
+  color:#fff;
+}
+
+.cover video{
+  width:100%;
+}
+
+/* BUTONLAR */
+.controls{
+  position:fixed;
+  bottom:20px;
+  display:flex;
+  gap:20px;
+}
+button{
+  padding:10px 20px;
+  font-size:18px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="scene">
+  <div class="book-bg"></div>
+
+  <div class="book" id="book">
+
+    <!-- KAPAK -->
+    <div class="page left cover">
+      <div class="page-content">
+        <h1>KAPAK BAŞLIĞI</h1>
+        <video src="kapak.mp4" controls></video>
+      </div>
+    </div>
+
+    <!-- İÇ SAYFALAR -->
+    <!-- 1–20 -->
+    <script>
+      for(let i=1;i<=20;i++){
+        document.write(`
+        <div class="page ${i%2?'right':'left'}">
+          <div class="page-content">
+            <img src="foto${i}.jpg">
+            <h2>Sayfa ${i}</h2>
+            <p>Sayfa ${i} yazısı</p>
+          </div>
+        </div>`);
+      }
+    </script>
+
+    <!-- ARKA KAPAK -->
+    <div class="page right cover">
+      <div class="page-content">
+        <h1>ARKA KAPAK</h1>
+        <p>Teşekkürler</p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="controls">
+  <button onclick="prevPage()">◀</button>
+  <button onclick="nextPage()">▶</button>
+</div>
+
+<script>
+const pages = document.querySelectorAll(".page");
+let current = 0;
+
+pages.forEach((p,i)=>p.style.zIndex = pages.length - i);
+
+function nextPage(){
+  if(current < pages.length){
+    pages[current].style.transform =
+      pages[current].classList.contains("left")
+      ? "rotateY(-180deg)"
+      : "rotateY(180deg)";
+    current++;
+  }
+}
+
+function prevPage(){
+  if(current>0){
+    current--;
+    pages[current].style.transform="rotateY(0deg)";
+  }
+}
+</script>
+
+</body>
+</html>
